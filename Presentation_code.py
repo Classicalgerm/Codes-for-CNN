@@ -1,8 +1,8 @@
 # Load Model from Github to Colab
 
-#!wget --no-check-certificate \
-#  "https://github.com/your-username/your-repo/raw/main/cifar10_model.h5" \
-#  -O cifar10_model.h5
+!wget --no-check-certificate \
+  "https://github.com/Classicalgerm/Codes-for-CNN/blob/main/cifar10_model.h5" \
+  -O cifar10_model.h5
 
 from tensorflow.keras.models import load_model
 
