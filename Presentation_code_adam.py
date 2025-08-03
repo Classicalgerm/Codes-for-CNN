@@ -1,32 +1,24 @@
-# Load Model from Github to Colab
-
-!wget --no-check-certificate \
-  "https://github.com/Classicalgerm/Codes-for-CNN/blob/main/cifar10_model_adam.h5" \
-  -O cifar10_model_adam.h5
-
 from tensorflow.keras.models import load_model
-
-model = load_model("cifar10_model_adam.h5")
-print("Model loaded successfully!")
-
-# Test CIFAR-10 accuarcy
-_, acc = model.evaluate(x_test, y_test)
-print(f"Model Accuracy: {acc:.2f}")
-
-## Presentation
-
-# Upload Image and resize from webots
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from google.colab import files
 
-uploaded = files.upload()
-print("Uploaded files:", list(uploaded.keys()))
+# 1. Load model from local Colab storage
+model = load_model("cifar10_model_adam.h5")
+print("Model loaded successfully!")
 
-import os
-print(os.listdir())
+# 2. Load CIFAR-10 test data
+(_, _), (x_test, y_test) = cifar10.load_data()
+x_test = x_test.astype("float32") / 255.0
+y_test = to_categorical(y_test, 10)
 
-# CIFAR-10 labels
+# 3. Evaluate model accuracy
+_, acc = model.evaluate(x_test, y_test, verbose=0)
+print(f"Model Accuracy: {acc:.2f}")
+
+# 4. Upload an image and predict
 labels = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
 
 def load_and_predict(img_path):
@@ -37,4 +29,6 @@ def load_and_predict(img_path):
     predicted_class = labels[np.argmax(prediction)]
     print(f"Prediction for {img_path}: {predicted_class}")
 
-load_and_predict("captured_image.png")
+uploaded = files.upload()
+file_name = list(uploaded.keys())[0]
+load_and_predict(file_name)
