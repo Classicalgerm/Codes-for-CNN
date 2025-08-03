@@ -4,6 +4,8 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from google.colab import files
+import matplotlib.pyplot as plt
+from PIL import Image  # For displaying the uploaded image
 
 # 1. Load model from local Colab storage
 model = load_model("cifar10_model_adam.h5")
@@ -18,17 +20,28 @@ y_test = to_categorical(y_test, 10)
 _, acc = model.evaluate(x_test, y_test, verbose=0)
 print(f"Model Accuracy: {acc:.2f}")
 
-# 4. Upload an image and predict
+# 4. CIFAR-10 labels
 labels = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
 
+# 5. Prediction function with visualization
 def load_and_predict(img_path):
+    # Load and preprocess image
     img = image.load_img(img_path, target_size=(32, 32))
     img_array = image.img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
+
+    # Predict
     prediction = model.predict(img_array)
     predicted_class = labels[np.argmax(prediction)]
-    print(f"Prediction for {img_path}: {predicted_class}")
+    confidence = np.max(prediction)
 
+    # Show image + prediction
+    plt.imshow(Image.open(img_path))
+    plt.axis('off')
+    plt.title(f"🧠 Predicted: {predicted_class} ({confidence * 100:.2f}%)")
+    plt.show()
+
+# 6. Upload and predict
 uploaded = files.upload()
 file_name = list(uploaded.keys())[0]
 load_and_predict(file_name)
